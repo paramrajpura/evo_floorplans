@@ -279,6 +279,8 @@ class Genome(object):
                 room_diff += 1
 
         most_nodes = max(len(genome1.node_genes), len(genome2.node_genes))
+
+        # This checks the size differences , excess room differences weighted with corresponding multipliers
         distance = (self.config.excess_coefficient * float(excess1 + excess2) / most_nodes
                     + self.config.excess_coefficient * float(room_diff) / most_nodes
                     + self.config.weight_coefficient * (size_diff) / len(common_nodes))
@@ -309,7 +311,8 @@ class Genome(object):
                     matching += 1
 
             disjoint += len(genome2.conn_genes) - matching
-
+            # Distance between connections considered as excess or disjoint wrt first connection, if same connections
+            # weights are compared and added as difference.
             distance += self.config.excess_coefficient * float(excess) / N
             distance += self.config.disjoint_coefficient * float(disjoint) / N
             if matching > 0:
@@ -382,6 +385,7 @@ class Genome(object):
     @classmethod
     def create(cls, ID, config, innovation_indexer):
         '''
+        Creates the object instance of this class
         '''
         c = cls(ID, config, None, None, config.spec.variable_room_types)
         node_id = 0
@@ -389,8 +393,12 @@ class Genome(object):
         name_groups = defaultdict(set)
 
 
+        # Room represented as node gene and connections between them as edges, a genome consists of these parameters
+        # TODO: Check the specifications to understand this deeper.
 
         # Create node genes based off of rooms in spec.
+        # The spec gets the data out from the config file and Building spec instance in main.py is used to init the
+        # sequence of rooms with corresponding areas.
         for _, room in config.spec.nodes(True):
             assert node_id not in c.node_genes
             name = room['name']

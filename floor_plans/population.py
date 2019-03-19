@@ -45,10 +45,15 @@ class Population(object):
         if config.report:
             self.add_reporter(StdOutReporter())
 
+
         self.config = config
+
+        # Init the indices for species, genomes and innovation TODO: Innovation needs to be understood.
         self.species_indexer = Indexer(1)
         self.genome_indexer = Indexer(1)
         self.innovation_indexer = InnovationIndexer(0)
+
+        # Chooses reproduction strategy, there is only one available TODO: Check how reproduction strategy is defined.
         self.reproduction = config.reproduction_type(self.config, self.reporters,
                                                      self.genome_indexer, self.innovation_indexer)
 
@@ -98,7 +103,9 @@ class Population(object):
         # solely on what's in the config object. This allows users to completely
         # replace the initial population creation scheme if they choose.
         for i in range(self.config.pop_size):
+            # Generates incremental ids
             g_id = self.genome_indexer.next()
+            # Creation cof each genome linked with g_id and appended to pop
             g = Genome.create(g_id, self.config, self.innovation_indexer)
             new_population.append(g)
 
